@@ -1,0 +1,51 @@
+name: Intégration continue
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests-linux:
+    name: Tests du cœur (Linux)
+    runs-on: ubuntu-24.04
+    container: swift:6.2-noble
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tests de NoyaCore
+        run: swift test --package-path NoyaCore
+
+  macos:
+    name: Tests et compilation (macOS)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Versions des outils
+        run: |
+          sw_vers
+          xcodebuild -version
+          swift --version
+      - name: Tests de NoyaCore
+        run: swift test --package-path NoyaCore
+      - name: Compilation de l'application (Release, signature ad hoc)
+        run: ./scripts/compiler.sh
+      - name: Contrôle du paquet .app
+        run: |
+          APP="build/DerivedData/Build/Products/Release/NOYA SSH Manager.app"
+          plutil -p "$APP/Contents/Info.plist" | grep -E "CFBundle(Identifier|ShortVersionString|DisplayName|Localizations)|LSMinimumSystemVersion" -A1
+          codesign -dv --verbose=2 "$APP" 2>&1 | grep -E "Identifier|Format|flags|Signature"
+          du -sh "$APP"
+      - name: Archive de l'application
+        uses: actions/upload-artifact@v4
+        with:
+          name: NOYA-SSH-Manager-macOS
+          path: dist/
+          retention-days: 14

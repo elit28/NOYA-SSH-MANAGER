@@ -60,3 +60,12 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# NOYA SSH Manager
+build/
+dist/
+DerivedData/
+*.xcresult
+.DS_Store
+# Configuration personnelle (serveurs réels) : jamais versionnée.
+Personnel/

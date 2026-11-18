@@ -1,0 +1,35 @@
+name: Publication
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  publication:
+    name: Compilation et publication sur GitHub Releases
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tests de NoyaCore
+        run: swift test --package-path NoyaCore
+      - name: Concordance balise / version
+        run: |
+          VERSION=$(xcodebuild -project NoyaSSHManager.xcodeproj -scheme NoyaSSHManager -configuration Release -showBuildSettings 2>/dev/null \
+            | awk -F' = ' '/^ *MARKETING_VERSION = / { print $2; exit }')
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "La balise $GITHUB_REF_NAME ne correspond pas à MARKETING_VERSION ($VERSION)."
+            exit 1
+          fi
+      - name: Compilation
+        run: ./scripts/compiler.sh
+      - name: Création de la publication (préversion non notarisée)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/*.zip dist/*.sha256 \
+            --title "NOYA SSH Manager ${GITHUB_REF_NAME#v}" \
+            --notes-file .github/notes-publication.md \
+            --prerelease

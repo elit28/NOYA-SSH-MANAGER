@@ -1,0 +1,24 @@
+{
+  "version" : 1,
+  "serveurs" : [
+    {
+      "alias" : "web-prod",
+      "environnement" : "production",
+      "groupe" : "Client A",
+      "nom" : "Serveur web",
+      "notes" : "Exemple fictif : remplacez par vos propres alias."
+    },
+    {
+      "alias" : "web-preprod",
+      "environnement" : "test",
+      "groupe" : "Client A",
+      "nom" : "Préproduction"
+    },
+    {
+      "alias" : "ancien-serveur",
+      "environnement" : "ancien",
+      "groupe" : "Archives",
+      "nom" : "Ancien serveur"
+    }
+  ]
+}
