@@ -188,7 +188,7 @@ final class LecteurParametresTests: XCTestCase {
 
     func testEchecRemonteLeMessage() async {
         do {
-            _ = try await LecteurParametres.lire(alias: "x", executable: "/bin/false")
+            _ = try await LecteurParametres.lire(alias: "x", executable: "/usr/bin/false")
             XCTFail("Une erreur était attendue")
         } catch let erreur as ErreurParametres {
             guard case .echec = erreur else { return XCTFail("Erreur inattendue : \(erreur)") }

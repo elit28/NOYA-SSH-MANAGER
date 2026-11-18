@@ -70,7 +70,7 @@ struct ReglagesGeneraux: View {
     private var cheminAbrege: String {
         guard let chemin = store.stockage?.url.path else { return "Indisponible" }
         let maison = FileManager.default.homeDirectoryForCurrentUser.path
-        return chemin.hasPrefix(maison) ? "~" + chemin.dropFirst(maison.count) : chemin
+        return chemin.hasPrefix(maison) ? "~" + String(chemin.dropFirst(maison.count)) : chemin
     }
 }
 
