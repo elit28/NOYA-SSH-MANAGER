@@ -89,7 +89,7 @@ Seul `alias` est obligatoire. `environnement` accepte `production`, `test` ou `a
 
 ## Compilation depuis les sources
 
-Prérequis : **Xcode 16** ou plus récent (le projet utilise les dossiers synchronisés d'Xcode 16), macOS 14 ou plus récent.
+Prérequis : **Xcode 16** ou plus récent (le projet utilise les dossiers synchronisés d'Xcode 16 ; compilation vérifiée avec Xcode 26.6), macOS 14 ou plus récent.
 
 ```bash
 git clone https://github.com/elit28/NOYA-SSH-MANAGER.git
@@ -157,9 +157,10 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/). La ver
 
 | Élément | Vérification | Résultat |
 |---|---|---|
-| Cœur `NoyaCore` (47 tests) | `swift test` sous Linux, Swift 6.4 | Réussi |
-| Cœur `NoyaCore` | `swift test` sous macOS (GitHub Actions) | Voir le badge d'intégration continue |
-| Compilation de l'application | `xcodebuild` sous macOS (GitHub Actions) | Voir le badge d'intégration continue |
+| Cœur `NoyaCore` (47 tests) | `swift test` sous Linux (Swift 6.4 en local, 6.2 en intégration continue) | Réussi |
+| Cœur `NoyaCore` (47 tests) | `swift test` sous macOS 26.7, Swift 6.3 (GitHub Actions) | Réussi |
+| Compilation de l'application | `xcodebuild` Release avec Xcode 26.6 (GitHub Actions) : binaire universel arm64 + x86_64, 4,4 Mo, Hardened Runtime, signature ad hoc | Réussi |
+| Compilation avec Xcode 16 | — | Non testée |
 | Ouverture de Terminal, vérification TCP, interface | Test manuel sur un Mac | **À réaliser** |
 | Consommation mémoire et processeur | Mesure avec les outils macOS | **À réaliser** |
 
