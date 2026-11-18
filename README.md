@@ -151,7 +151,7 @@ flowchart LR
 | Étape | État |
 |---|---|
 | Compilation reproductible (`scripts/compiler.sh`) | En place |
-| Publication automatique sur GitHub Releases (balise `vX.Y.Z`) | En place (`.github/workflows/publication.yml`) |
+| Publication automatique sur GitHub Releases | En place (`.github/workflows/publication.yml`) |
 | Signature Developer ID | **Non réalisée** : nécessite un compte Apple Developer payant |
 | Notarisation Apple | **Non réalisée** : script prêt (`scripts/notariser.sh`) |
 
@@ -163,7 +163,7 @@ IDENTITE_SIGNATURE="Developer ID Application: Nom (EQUIPE1234)" EQUIPE_DEVELOPPE
 
 ## Versionnage
 
-Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/). La version se trouve dans `MARKETING_VERSION` (projet Xcode) et l'historique dans [CHANGELOG.md](CHANGELOG.md). Pousser une balise `vX.Y.Z` correspondant à `MARKETING_VERSION` déclenche la compilation et la publication.
+Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/). La version se trouve dans `MARKETING_VERSION` (projet Xcode) et l'historique dans [CHANGELOG.md](CHANGELOG.md). Une publication se lance en poussant une balise `vX.Y.Z` correspondant à `MARKETING_VERSION`, ou depuis l'onglet **Actions › Publication › Run workflow** : le workflow compile l'application, crée la balise et la version sur GitHub Releases.
 
 ## État des vérifications
 

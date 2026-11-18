@@ -73,5 +73,5 @@ L'intégration continue exécute ces deux étapes à chaque modification : une c
 
 1. Mettez à jour `MARKETING_VERSION` dans le projet Xcode (versionnage sémantique).
 2. Renommez la section « Non publié » de `CHANGELOG.md` avec le numéro et la date.
-3. Poussez la balise correspondante, par exemple `v0.2.0`. Le workflow « Publication » compile l'application et crée la version sur GitHub Releases.
+3. Publiez : soit en poussant la balise correspondante (par exemple `v0.2.0`), soit depuis l'onglet **Actions › Publication › Run workflow** en indiquant `0.2.0`. Le workflow vérifie la version, lance les tests, compile l'application, crée la balise et la version sur GitHub Releases.
 4. Pour une version signée et notarisée, utilisez `scripts/notariser.sh` (compte Apple Developer requis).

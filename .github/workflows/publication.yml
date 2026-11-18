@@ -1,11 +1,25 @@
 name: Publication
 
+# Deux façons de publier une version :
+#  - pousser une balise vX.Y.Z ;
+#  - lancer ce workflow à la main (onglet Actions › Publication › Run workflow)
+#    en indiquant X.Y.Z : la balise est alors créée sur le commit choisi.
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version à publier, identique à MARKETING_VERSION (par exemple 0.1.0)"
+        required: true
+        type: string
 
 permissions:
   contents: write
+
+concurrency:
+  group: publication
+  cancel-in-progress: false
 
 jobs:
   publication:
@@ -13,23 +27,53 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Tests de NoyaCore
-        run: swift test --package-path NoyaCore
-      - name: Concordance balise / version
+
+      - name: Détermination de la balise
+        env:
+          VERSION_DEMANDEE: ${{ inputs.version }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            if ! printf '%s' "$VERSION_DEMANDEE" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "Version invalide : « $VERSION_DEMANDEE » (format attendu : X.Y.Z)."
+              exit 1
+            fi
+            BALISE="v$VERSION_DEMANDEE"
+          else
+            BALISE="$GITHUB_REF_NAME"
+          fi
+          echo "BALISE=$BALISE" >> "$GITHUB_ENV"
+          echo "Balise à publier : $BALISE"
+
+      - name: Concordance balise / version du projet
         run: |
           VERSION=$(xcodebuild -project NoyaSSHManager.xcodeproj -scheme NoyaSSHManager -configuration Release -showBuildSettings 2>/dev/null \
             | awk -F' = ' '/^ *MARKETING_VERSION = / { print $2; exit }')
-          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
-            echo "La balise $GITHUB_REF_NAME ne correspond pas à MARKETING_VERSION ($VERSION)."
+          if [ "v$VERSION" != "$BALISE" ]; then
+            echo "La balise $BALISE ne correspond pas à MARKETING_VERSION ($VERSION)."
             exit 1
           fi
+
+      - name: Version absente de GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$BALISE" >/dev/null 2>&1; then
+            echo "La version $BALISE existe déjà sur GitHub Releases."
+            exit 1
+          fi
+
+      - name: Tests de NoyaCore
+        run: swift test --package-path NoyaCore
+
       - name: Compilation
         run: ./scripts/compiler.sh
+
       - name: Création de la publication (préversion non notarisée)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" dist/*.zip dist/*.sha256 \
-            --title "NOYA SSH Manager ${GITHUB_REF_NAME#v}" \
+          gh release create "$BALISE" dist/*.zip dist/*.sha256 \
+            --target "$GITHUB_SHA" \
+            --title "NOYA SSH Manager ${BALISE#v}" \
             --notes-file .github/notes-publication.md \
             --prerelease
