@@ -174,7 +174,8 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/). La ver
 | Compilation de l'application | `xcodebuild` Release avec Xcode 26.6 (GitHub Actions) : binaire universel arm64 + x86_64, 4,4 Mo, Hardened Runtime, signature ad hoc | Réussi |
 | Lancement de l'application | Test manuel sur un MacBook Air Apple Silicon | Réussi |
 | Import depuis `~/.ssh/config` | Test manuel sur un MacBook Air Apple Silicon | Réussi |
-| Connexion dans Terminal, surveillance TCP | Test manuel sur un Mac | **À confirmer** |
+| Connexion dans Terminal | Test manuel sur un MacBook Air Apple Silicon | Réussi |
+| Surveillance TCP (disponibilité, latence) | Test manuel sur un Mac | **À confirmer** |
 | Compilation avec Xcode 16 | — | Non testée |
 | Consommation mémoire et processeur | Mesure avec les outils macOS | **À réaliser** |
 
