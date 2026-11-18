@@ -12,7 +12,7 @@ jobs:
     name: Compilation et publication sur GitHub Releases
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Tests de NoyaCore
         run: swift test --package-path NoyaCore
       - name: Concordance balise / version

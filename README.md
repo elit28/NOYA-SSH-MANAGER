@@ -1,13 +1,25 @@
-# NOYA SSH Manager
+<p align="center">
+  <img src="docs/icone.png" width="128" height="128" alt="Icône de NOYA SSH Manager">
+</p>
 
-[![Intégration continue](https://github.com/elit28/NOYA-SSH-MANAGER/actions/workflows/ci.yml/badge.svg)](https://github.com/elit28/NOYA-SSH-MANAGER/actions/workflows/ci.yml)
-[![Licence MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
+<h1 align="center">NOYA SSH Manager</h1>
 
-Gestionnaire de connexions SSH **natif pour macOS**, écrit en Swift et SwiftUI. Léger, local, sans dépendance externe et entièrement en français.
+<p align="center">
+  Gestionnaire de connexions SSH <strong>natif pour macOS</strong> — léger, local, sécurisé et entièrement en français.
+</p>
 
-L'application ne remplace pas OpenSSH : elle organise vos serveurs, surveille leur disponibilité et ouvre vos sessions dans Terminal avec le client `/usr/bin/ssh` de macOS, en respectant votre fichier `~/.ssh/config`.
+<p align="center">
+  <a href="https://github.com/elit28/NOYA-SSH-MANAGER/releases/latest"><img src="https://img.shields.io/github/v/release/elit28/NOYA-SSH-MANAGER?include_prereleases&label=version" alt="Dernière version"></a>
+  <a href="https://github.com/elit28/NOYA-SSH-MANAGER/actions/workflows/ci.yml"><img src="https://github.com/elit28/NOYA-SSH-MANAGER/actions/workflows/ci.yml/badge.svg" alt="Intégration continue"></a>
+  <img src="https://img.shields.io/badge/macOS-14%2B-lightgrey" alt="macOS 14 ou plus récent">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licence-MIT-blue.svg" alt="Licence MIT"></a>
+</p>
 
-> **État du projet : préversion 0.1.0.** Voir [État des vérifications](#état-des-vérifications) pour savoir précisément ce qui a été testé, et où.
+NOYA SSH Manager est écrit en Swift et SwiftUI, sans aucune dépendance externe. Il ne remplace pas OpenSSH : il organise vos serveurs, surveille leur disponibilité et ouvre vos sessions dans Terminal avec le client `/usr/bin/ssh` de macOS, en respectant votre fichier `~/.ssh/config`.
+
+**[Télécharger la dernière version](https://github.com/elit28/NOYA-SSH-MANAGER/releases/latest)** · [Installation](#installation) · [Premiers pas](#premiers-pas) · [Sécurité](#sécurité-et-confidentialité) · [Contribuer](CONTRIBUTING.md)
+
+> **Préversion 0.1.0.** La section [État des vérifications](#état-des-vérifications) indique précisément ce qui a été testé, et où.
 
 ## Fonctionnalités
 
@@ -160,9 +172,17 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/). La ver
 | Cœur `NoyaCore` (47 tests) | `swift test` sous Linux (Swift 6.4 en local, 6.2 en intégration continue) | Réussi |
 | Cœur `NoyaCore` (47 tests) | `swift test` sous macOS 26.7, Swift 6.3 (GitHub Actions) | Réussi |
 | Compilation de l'application | `xcodebuild` Release avec Xcode 26.6 (GitHub Actions) : binaire universel arm64 + x86_64, 4,4 Mo, Hardened Runtime, signature ad hoc | Réussi |
+| Lancement de l'application | Test manuel sur un MacBook Air Apple Silicon | Réussi |
+| Import depuis `~/.ssh/config` | Test manuel sur un MacBook Air Apple Silicon | Réussi |
+| Connexion dans Terminal, surveillance TCP | Test manuel sur un Mac | **À confirmer** |
 | Compilation avec Xcode 16 | — | Non testée |
-| Ouverture de Terminal, vérification TCP, interface | Test manuel sur un Mac | **À réaliser** |
 | Consommation mémoire et processeur | Mesure avec les outils macOS | **À réaliser** |
+
+Un problème ? [Ouvrez un ticket](https://github.com/elit28/NOYA-SSH-MANAGER/issues/new/choose) en précisant votre version de macOS.
+
+## Contribuer
+
+Les contributions sont les bienvenues : lisez d'abord le [guide de contribution](CONTRIBUTING.md). Pour signaler une faille de sécurité, suivez la [politique de sécurité](SECURITY.md).
 
 ## Licence
 

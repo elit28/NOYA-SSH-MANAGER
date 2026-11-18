@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     container: swift:6.2-noble
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Tests de NoyaCore
         run: swift test --package-path NoyaCore
 
@@ -27,7 +27,7 @@ jobs:
     name: Tests et compilation (macOS)
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Versions des outils
         run: |
           sw_vers
@@ -44,7 +44,7 @@ jobs:
           codesign -dv --verbose=2 "$APP" 2>&1 | grep -E "Identifier|Format|flags|Signature"
           du -sh "$APP"
       - name: Archive de l'application
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: NOYA-SSH-Manager-macOS
           path: dist/

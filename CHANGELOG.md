@@ -5,7 +5,7 @@ Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) 
 
 ## [Non publié]
 
-## [0.1.0] - Préversion en cours
+## [0.1.0] - 2026-11-18
 
 ### Ajouté
 
@@ -18,3 +18,6 @@ Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) 
 - Surveillance TCP du port SSH : parallèle, délai de 3 s, latence, actualisation toutes les 30 s uniquement quand la fenêtre est active.
 - Réglages : actualisation automatique, intervalle, délai d'expiration, animations.
 - Raccourcis clavier macOS, icône, scripts de compilation et de notarisation, intégration continue.
+
+[Non publié]: https://github.com/elit28/NOYA-SSH-MANAGER/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/elit28/NOYA-SSH-MANAGER/releases/tag/v0.1.0

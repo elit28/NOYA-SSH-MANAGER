@@ -41,6 +41,7 @@ xcodebuild \
   -scheme "$SCHEMA" \
   -configuration Release \
   -derivedDataPath "$DERIVEES" \
+  -destination "generic/platform=macOS" \
   -quiet \
   "${OPTIONS_SIGNATURE[@]}" \
   clean build

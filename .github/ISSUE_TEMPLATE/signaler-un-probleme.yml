@@ -1,0 +1,46 @@
+name: Signaler un problème
+description: L'application ne fonctionne pas comme prévu.
+labels: ["bogue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de prendre le temps de signaler ce problème.
+        **N'indiquez aucune donnée réelle** (adresse IP, utilisateur, extrait de `~/.ssh/config`) : remplacez-les par des valeurs fictives.
+  - type: input
+    id: version-app
+    attributes:
+      label: Version de NOYA SSH Manager
+      description: Menu NOYA SSH Manager › À propos de NOYA SSH Manager.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: version-macos
+    attributes:
+      label: Version de macOS et type de Mac
+      placeholder: "macOS 15.2, MacBook Air Apple Silicon"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description du problème
+      description: Ce qui se passe, et ce que vous attendiez.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Étapes pour reproduire
+      placeholder: |
+        1. Ouvrir…
+        2. Cliquer sur…
+        3. Constater…
+    validations:
+      required: true
+  - type: textarea
+    id: message
+    attributes:
+      label: Message d'erreur affiché (facultatif)
+      render: text
