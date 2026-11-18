@@ -25,7 +25,7 @@ jobs:
 
   macos:
     name: Tests et compilation (macOS)
-    runs-on: macos-15
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Versions des outils

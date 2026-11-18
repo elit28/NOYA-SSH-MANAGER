@@ -10,7 +10,7 @@ permissions:
 jobs:
   publication:
     name: Compilation et publication sur GitHub Releases
-    runs-on: macos-15
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - name: Tests de NoyaCore
