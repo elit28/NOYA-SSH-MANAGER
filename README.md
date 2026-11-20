@@ -19,7 +19,7 @@ NOYA SSH Manager est écrit en Swift et SwiftUI, sans aucune dépendance externe
 
 **[Télécharger la dernière version](https://github.com/elit28/NOYA-SSH-MANAGER/releases/latest)** · [Installation](#installation) · [Premiers pas](#premiers-pas) · [Sécurité](#sécurité-et-confidentialité) · [Contribuer](CONTRIBUTING.md)
 
-> **Préversion 0.1.0.** La section [État des vérifications](#état-des-vérifications) indique précisément ce qui a été testé, et où.
+> **Préversion 0.2.0.** La section [État des vérifications](#état-des-vérifications) indique précisément ce qui a été testé, et où.
 
 ## Fonctionnalités
 
@@ -30,6 +30,7 @@ NOYA SSH Manager est écrit en Swift et SwiftUI, sans aucune dépendance externe
 - **Paramètres effectifs** de chaque alias (hôte, utilisateur, port, clé, rebond) calculés par OpenSSH lui-même avec `ssh -G`.
 - **Surveillance de disponibilité** : test TCP du port SSH, en parallèle, avec latence, délai d'expiration de 3 s et actualisation toutes les 30 s **uniquement quand la fenêtre est au premier plan**.
 - **Import / export JSON** de la liste (sans aucun secret).
+- **Assistant IA local** (macOS 27) : raccourci ⌥⌘A vers `fm chat`, le modèle d'Apple exécuté sur le Mac, pour expliquer une commande ou un message d'erreur SSH. Voir [Assistant IA local](#assistant-ia-local-macos-27).
 - Interface sombre bleu nuit, SF Symbols, raccourcis clavier macOS, animations désactivables.
 
 ## Sécurité et confidentialité
@@ -43,6 +44,7 @@ NOYA SSH Manager est écrit en Swift et SwiftUI, sans aucune dépendance externe
 | Aucune commande distante | Seule action réseau automatique : ouvrir puis fermer une connexion TCP vers le port SSH. |
 | Aucune télémétrie, aucun compte | Aucune donnée n'est envoyée à un service tiers. |
 | Aucun processus en arrière-plan | L'application se ferme avec sa dernière fenêtre ; la surveillance s'arrête avec elle. |
+| Assistant IA sans envoi de données | `fm chat` est ouvert avec le modèle d'Apple exécuté sur le Mac, jamais Private Cloud Compute ; l'application ne lit pas les conversations. |
 
 La liste est enregistrée dans `~/Library/Application Support/NOYA SSH Manager/serveurs.json` (droits `0600`).
 
@@ -90,6 +92,7 @@ Seul `alias` est obligatoire. `environnement` accepte `production`, `test` ou `a
 | ⇧⌘C | Copier la commande SSH |
 | ⌘1 … ⌘9 | Sélectionner un serveur |
 | ⌃⌘S | Afficher ou masquer la barre latérale |
+| ⌥⌘A | Ouvrir l'assistant IA local (macOS 27) |
 | ⌘, | Réglages |
 
 ## Surveillance : ce qu'elle mesure, et ce qu'elle ne mesure pas
@@ -98,6 +101,18 @@ Seul `alias` est obligatoire. `environnement` accepte `production`, `test` ou `a
 - La **latence** affichée est le temps d'établissement de la connexion TCP.
 - Les alias qui passent par un **rebond** (`ProxyJump`, `ProxyCommand`) sont marqués « Non vérifiable » : un test direct ne serait pas représentatif.
 - Chaque vérification apparaît dans les journaux SSH du serveur. Un pare-feu strict (par exemple **fail2ban en mode agressif**) peut juger ces connexions suspectes : augmentez l'intervalle dans **Réglages › Surveillance** si nécessaire.
+
+## Assistant IA local (macOS 27)
+
+macOS 27 inclut `fm`, l'outil en ligne de commande des modèles d'Apple ([WWDC26, session 334](https://developer.apple.com/videos/play/wwdc2026/334/)). NOYA SSH Manager y donne accès en un geste : bouton ✨ de la barre d'outils, menu **Assistant** ou ⌥⌘A.
+
+- L'application ouvre `fm chat` dans une nouvelle fenêtre Terminal, avec des consignes : répondre en français, expliquer les commandes Linux et SSH et les messages d'erreur, ne jamais demander de mot de passe ni de clé, signaler les commandes risquées.
+- **Modèle exécuté sur le Mac uniquement** : `--model system` est ajouté lorsque `fm chat` le prend en charge, ce qui l'emporte sur un éventuel fournisseur par défaut configuré avec `fm config`. Le modèle Private Cloud Compute n'est jamais choisi par l'application.
+- **Première utilisation** : Apple demande d'accepter ses conditions une seule fois, avec un mot de passe administrateur. L'application ne lance jamais `sudo` : elle affiche la commande `sudo fm license` et propose de la copier.
+- Avant l'ouverture, un court diagnostic (`fm license --status`, `fm available`, `fm chat --help`) signale un modèle pas encore téléchargé ou indisponible.
+- Avant macOS 27, le bouton est masqué et le menu désactivé.
+
+Limites connues : macOS 27 sur Mac Apple Silicon uniquement ; fenêtre de contexte limitée (environ 4 000 jetons selon les tests publiés) ; prise en charge du français non documentée par Apple ; `fm` enregistre les conversations dans `~/.fm/sessions`.
 
 ## Compilation depuis les sources
 
@@ -169,13 +184,14 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/). La ver
 
 | Élément | Vérification | Résultat |
 |---|---|---|
-| Cœur `NoyaCore` (47 tests) | `swift test` sous Linux (Swift 6.4 en local, 6.2 en intégration continue) | Réussi |
+| Cœur `NoyaCore` (57 tests) | `swift test` sous Linux (Swift 6.4 en local, 6.2 en intégration continue) | Réussi |
 | Cœur `NoyaCore` (47 tests) | `swift test` sous macOS 26.7, Swift 6.3 (GitHub Actions) | Réussi |
 | Compilation de l'application | `xcodebuild` Release avec Xcode 26.6 (GitHub Actions) : binaire universel arm64 + x86_64, 4,4 Mo, Hardened Runtime, signature ad hoc | Réussi |
 | Lancement de l'application | Test manuel sur un MacBook Air Apple Silicon | Réussi |
 | Import depuis `~/.ssh/config` | Test manuel sur un MacBook Air Apple Silicon | Réussi |
 | Connexion dans Terminal | Test manuel sur un MacBook Air Apple Silicon | Réussi |
 | Surveillance TCP (disponibilité, latence) | Test manuel sur un Mac | **À confirmer** |
+| Assistant IA local (`fm`, macOS 27) | Tests automatisés du script et de l'analyse des sorties (faux `fm`) ; essai réel sur un Mac sous macOS 27 | **À confirmer sur macOS 27** |
 | Compilation avec Xcode 16 | — | Non testée |
 | Consommation mémoire et processeur | Mesure avec les outils macOS | **À réaliser** |
 

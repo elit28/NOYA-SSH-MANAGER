@@ -38,6 +38,8 @@ struct MessageErreur: Identifiable, Equatable {
     let id = UUID()
     let titre: String
     let message: String
+    /// Commande proposée à la copie (par exemple `sudo fm license`), jamais exécutée par l'app.
+    var commandeACopier: String? = nil
 }
 
 /// Modèle principal : liste des serveurs, paramètres SSH, disponibilité et
@@ -68,6 +70,14 @@ final class ServeurStore {
     private(set) var demandeFocusRecherche = 0
 
     let stockage: StockageServeurs?
+
+    // MARK: Assistant IA local (fm, macOS 27)
+
+    /// Présence de `/usr/bin/fm`, vérifiée une fois au lancement (simple test de fichier).
+    let assistantInstalle = AssistantFM.estInstalle()
+    /// Dernier état connu, affiché dans les réglages.
+    private(set) var etatAssistant: EtatAssistant?
+    private(set) var ouvertureAssistantEnCours = false
 
     // MARK: Tâches internes
 
@@ -373,6 +383,52 @@ final class ServeurStore {
                 erreur = MessageErreur(titre: "Connexion impossible", message: error.localizedDescription)
             }
         }
+    }
+
+    /// Ouvre l'assistant IA local d'Apple (`fm chat`) dans Terminal, après un court diagnostic.
+    /// Rien n'est lancé avec `sudo` ; le modèle Private Cloud Compute n'est jamais choisi.
+    func ouvrirAssistant() {
+        guard !ouvertureAssistantEnCours else { return }
+        ouvertureAssistantEnCours = true
+        Task {
+            defer { ouvertureAssistantEnCours = false }
+            let diagnostic = await AssistantFM.diagnostiquer()
+            etatAssistant = diagnostic.etat
+            switch diagnostic.etat {
+            case .absent:
+                erreur = MessageErreur(
+                    titre: "Assistant IA local indisponible",
+                    message: "L’assistant d’Apple (commande fm) est inclus dans macOS 27, sur les Mac Apple Silicon. Il n’est pas présent sur ce Mac."
+                )
+            case .licenceNonAcceptee:
+                erreur = MessageErreur(
+                    titre: "Conditions d’Apple à accepter",
+                    message: "Avant la première utilisation, acceptez une seule fois les conditions d’Apple : dans Terminal, tapez « \(AssistantFM.commandeLicence) », saisissez votre mot de passe administrateur, puis répondez « y ». NOYA SSH Manager ne lance jamais de commande avec sudo.",
+                    commandeACopier: AssistantFM.commandeLicence
+                )
+            case .modeleIndisponible(let raison):
+                erreur = MessageErreur(titre: "Assistant IA local indisponible", message: raison)
+            case .pret, .indetermine:
+                do {
+                    try await LanceurTerminal.ouvrir(script: AssistantFM.scriptTerminal(modeleLocalExplicite: diagnostic.modeleLocalExplicite))
+                    notifier("Assistant IA local ouvert dans Terminal")
+                } catch {
+                    erreur = MessageErreur(titre: "Ouverture impossible", message: error.localizedDescription)
+                }
+            }
+        }
+    }
+
+    /// Met à jour l'état de l'assistant (fenêtre Réglages), sans rien ouvrir.
+    func verifierAssistant() async {
+        etatAssistant = await AssistantFM.diagnostiquer().etat
+    }
+
+    func copierTexte(_ texte: String) {
+        let pressePapiers = NSPasteboard.general
+        pressePapiers.clearContents()
+        pressePapiers.setString(texte, forType: .string)
+        notifier("Copié : \(texte)")
     }
 
     func copierCommande(_ serveur: Serveur) {

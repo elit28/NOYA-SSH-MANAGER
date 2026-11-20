@@ -19,7 +19,7 @@ enum ErreurLancement: LocalizedError {
     }
 }
 
-/// Ouverture d'une session SSH dans une nouvelle fenêtre Terminal.app.
+/// Ouverture d'une session SSH, ou de l'assistant IA local, dans une nouvelle fenêtre Terminal.app.
 ///
 /// Méthode : un court script `.command` (droits 0700, dans le dossier
 /// temporaire privé de l'utilisateur) est ouvert avec Terminal. Le script se
@@ -33,12 +33,19 @@ enum LanceurTerminal {
     private static let prefixe = "noya-ssh-"
     private static let extensionScript = "command"
 
+    /// Ouvre une session SSH.
     @MainActor
     static func ouvrir(_ commande: CommandeSSH) async throws {
+        try await ouvrir(script: commande.scriptTerminal())
+    }
+
+    /// Ouvre un script (déjà construit à partir de valeurs validées ou citées) dans une nouvelle fenêtre Terminal.
+    @MainActor
+    static func ouvrir(script contenu: String) async throws {
         guard let terminal = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifiantTerminal) else {
             throw ErreurLancement.terminalIntrouvable
         }
-        let script = try ecrireScript(commande)
+        let script = try ecrireScript(contenu)
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.activates = true
         do {
@@ -49,10 +56,10 @@ enum LanceurTerminal {
         }
     }
 
-    static func ecrireScript(_ commande: CommandeSSH) throws -> URL {
+    static func ecrireScript(_ contenu: String) throws -> URL {
         let nom = "\(prefixe)\(UUID().uuidString).\(extensionScript)"
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(nom, isDirectory: false)
-        let donnees = Data(commande.scriptTerminal().utf8)
+        let donnees = Data(contenu.utf8)
         let cree = FileManager.default.createFile(
             atPath: url.path,
             contents: donnees,

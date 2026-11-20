@@ -12,7 +12,7 @@ struct VueReglages: View {
             ReglagesConfidentialite()
                 .tabItem { Label("Confidentialité", systemImage: "hand.raised") }
         }
-        .frame(width: 580, height: 440)
+        .frame(width: 580, height: 520)
         .modifier(AnimationsActives())
         .preferredColorScheme(.dark)
     }
@@ -57,6 +57,23 @@ struct ReglagesGeneraux: View {
                 }
             }
 
+            Section("Assistant IA local (macOS 27)") {
+                LabeledContent("État") {
+                    Text(verbatim: texteEtatAssistant)
+                        .multilineTextAlignment(.trailing)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                if store.etatAssistant == .licenceNonAcceptee {
+                    Button("Copier « \(AssistantFM.commandeLicence) »") {
+                        store.copierTexte(AssistantFM.commandeLicence)
+                    }
+                }
+                LigneInfo(
+                    icone: "sparkles",
+                    texte: "Ouvre « fm chat » dans Terminal (⌥⌘A) avec le modèle d’Apple exécuté sur ce Mac, jamais le Private Cloud Compute. Les conversations sont enregistrées par fm dans ~/.fm/sessions ; NOYA SSH Manager ne les lit pas."
+                )
+            }
+
             Section {
                 LigneInfo(
                     icone: "power",
@@ -65,6 +82,16 @@ struct ReglagesGeneraux: View {
             }
         }
         .formStyle(.grouped)
+        .task {
+            if store.assistantInstalle {
+                await store.verifierAssistant()
+            }
+        }
+    }
+
+    private var texteEtatAssistant: String {
+        if !store.assistantInstalle { return EtatAssistant.absent.description }
+        return store.etatAssistant?.description ?? "Vérification…"
     }
 
     private var cheminAbrege: String {
@@ -122,6 +149,7 @@ struct ReglagesConfidentialite: View {
         ("Ni mot de passe ni clé privée", "Jamais lus, copiés ni enregistrés par l'application."),
         ("~/.ssh/config en lecture seule", "Paramètres lus avec « ssh -G alias », jamais modifiés."),
         ("Aucune option SSH ajoutée", "StrictHostKeyChecking et l'authentification restent ceux de votre configuration."),
+        ("Assistant IA local facultatif", "Modèle d’Apple exécuté sur le Mac (macOS 27) ; l’app ne lit pas vos conversations."),
     ]
 
     var body: some View {

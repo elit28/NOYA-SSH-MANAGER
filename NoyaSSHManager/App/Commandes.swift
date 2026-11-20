@@ -95,6 +95,14 @@ struct CommandesApplication: Commands {
             .disabled(store.serveurs.isEmpty || store.feuille != nil)
         }
 
+        CommandMenu("Assistant") {
+            Button("Ouvrir l’assistant IA local") {
+                store.ouvrirAssistant()
+            }
+            .keyboardShortcut("a", modifiers: [.command, .option])
+            .disabled(!store.assistantInstalle || store.ouvertureAssistantEnCours || store.feuille != nil)
+        }
+
         CommandGroup(replacing: .help) {
             Button("Documentation de NOYA SSH Manager") {
                 if let url = URL(string: "https://github.com/elit28/NOYA-SSH-MANAGER#readme") {

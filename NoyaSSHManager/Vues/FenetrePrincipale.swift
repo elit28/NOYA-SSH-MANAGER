@@ -21,6 +21,9 @@ struct FenetrePrincipale: View {
         .navigationSubtitle(store.resume)
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
+                if store.assistantInstalle {
+                    BoutonAssistant()
+                }
                 BoutonActualiser()
                 Button {
                     store.feuille = .ajout
@@ -48,7 +51,12 @@ struct FenetrePrincipale: View {
                 set: { if !$0 { store.erreur = nil } }
             ),
             presenting: store.erreur
-        ) { _ in
+        ) { erreur in
+            if let commande = erreur.commandeACopier {
+                Button("Copier la commande") {
+                    store.copierTexte(commande)
+                }
+            }
             Button("OK", role: .cancel) {}
         } message: { erreur in
             Text(verbatim: erreur.message)
@@ -87,6 +95,21 @@ struct FenetrePrincipale: View {
         .onDisappear {
             store.arreterSurveillance()
         }
+    }
+}
+
+/// Bouton « Assistant IA local » : ouvre `fm chat` (macOS 27) dans Terminal.
+struct BoutonAssistant: View {
+    @Environment(ServeurStore.self) private var store
+
+    var body: some View {
+        Button {
+            store.ouvrirAssistant()
+        } label: {
+            Label("Assistant IA local", systemImage: "sparkles")
+        }
+        .help("Ouvrir l’assistant IA local d’Apple dans Terminal (⌥⌘A)")
+        .disabled(store.ouvertureAssistantEnCours)
     }
 }
 
