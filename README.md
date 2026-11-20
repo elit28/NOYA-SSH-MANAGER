@@ -185,8 +185,8 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/). La ver
 | Élément | Vérification | Résultat |
 |---|---|---|
 | Cœur `NoyaCore` (57 tests) | `swift test` sous Linux (Swift 6.4 en local, 6.2 en intégration continue) | Réussi |
-| Cœur `NoyaCore` (47 tests) | `swift test` sous macOS 26.7, Swift 6.3 (GitHub Actions) | Réussi |
-| Compilation de l'application | `xcodebuild` Release avec Xcode 26.6 (GitHub Actions) : binaire universel arm64 + x86_64, 4,4 Mo, Hardened Runtime, signature ad hoc | Réussi |
+| Cœur `NoyaCore` (57 tests) | `swift test` sous macOS 26.7, Swift 6.3 (GitHub Actions) | Réussi |
+| Compilation de l'application | `xcodebuild` Release avec Xcode 26.6 (GitHub Actions) : binaire universel arm64 + x86_64, 4,6 Mo (version 0.2.0), Hardened Runtime, signature ad hoc | Réussi |
 | Lancement de l'application | Test manuel sur un MacBook Air Apple Silicon | Réussi |
 | Import depuis `~/.ssh/config` | Test manuel sur un MacBook Air Apple Silicon | Réussi |
 | Connexion dans Terminal | Test manuel sur un MacBook Air Apple Silicon | Réussi |
