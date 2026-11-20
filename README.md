@@ -191,7 +191,7 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/). La ver
 | Import depuis `~/.ssh/config` | Test manuel sur un MacBook Air Apple Silicon | Réussi |
 | Connexion dans Terminal | Test manuel sur un MacBook Air Apple Silicon | Réussi |
 | Surveillance TCP (disponibilité, latence) | Test manuel sur un Mac | **À confirmer** |
-| Assistant IA local (`fm`, macOS 27) | Tests automatisés du script et de l'analyse des sorties (faux `fm`) ; essai réel sur un Mac sous macOS 27 | **À confirmer sur macOS 27** |
+| Assistant IA local (`fm`, macOS 27) | Tests automatisés du script et de l'analyse des sorties (faux `fm`) ; essai réel de la 0.2.0 sur un MacBook Air Apple Silicon sous macOS 27 | Réussi |
 | Compilation avec Xcode 16 | — | Non testée |
 | Consommation mémoire et processeur | Mesure avec les outils macOS | **À réaliser** |
 
