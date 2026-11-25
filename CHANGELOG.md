@@ -5,6 +5,17 @@ Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) 
 
 ## [Non publié]
 
+## [0.3.0] - 2026-11-25
+
+### Ajouté
+
+- Couleur de fond de la fenêtre Terminal selon l'environnement du serveur : rouge très sombre pour la production, bleu nuit pour le test, gris anthracite pour les anciens serveurs. Appliquée par la séquence d'échappement OSC 11 à la seule fenêtre ouverte : le profil et les réglages de Terminal ne sont jamais modifiés.
+- Nouvel onglet Réglages › Terminal : activation, couleur de chaque environnement, retour aux couleurs par défaut.
+
+### Modifié
+
+- Les fenêtres ouvertes par l'application commencent désormais sur un écran propre : la ligne « …command ; exit; » tapée par Terminal est effacée.
+
 ## [0.2.0] - 2026-11-20
 
 ### Ajouté
@@ -32,6 +43,7 @@ Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) 
 - Réglages : actualisation automatique, intervalle, délai d'expiration, animations.
 - Raccourcis clavier macOS, icône, scripts de compilation et de notarisation, intégration continue.
 
-[Non publié]: https://github.com/elit28/NOYA-SSH-MANAGER/compare/v0.2.0...HEAD
+[Non publié]: https://github.com/elit28/NOYA-SSH-MANAGER/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/elit28/NOYA-SSH-MANAGER/releases/tag/v0.3.0
 [0.2.0]: https://github.com/elit28/NOYA-SSH-MANAGER/releases/tag/v0.2.0
 [0.1.0]: https://github.com/elit28/NOYA-SSH-MANAGER/releases/tag/v0.1.0

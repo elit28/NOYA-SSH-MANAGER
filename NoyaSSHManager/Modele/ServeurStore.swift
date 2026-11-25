@@ -377,7 +377,8 @@ final class ServeurStore {
         Task {
             do {
                 let commande = try CommandeSSH(alias: serveur.alias)
-                try await LanceurTerminal.ouvrir(commande)
+                let fond = Reglages.fondTerminal(pour: serveur.environnement)
+                try await LanceurTerminal.ouvrir(script: commande.scriptTerminal(fond: fond))
                 notifier("Ouverture de Terminal : \(commande.texteAffiche)")
             } catch {
                 erreur = MessageErreur(titre: "Connexion impossible", message: error.localizedDescription)

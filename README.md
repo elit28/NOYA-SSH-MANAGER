@@ -19,7 +19,7 @@ NOYA SSH Manager est écrit en Swift et SwiftUI, sans aucune dépendance externe
 
 **[Télécharger la dernière version](https://github.com/elit28/NOYA-SSH-MANAGER/releases/latest)** · [Installation](#installation) · [Premiers pas](#premiers-pas) · [Sécurité](#sécurité-et-confidentialité) · [Contribuer](CONTRIBUTING.md)
 
-> **Préversion 0.2.0.** La section [État des vérifications](#état-des-vérifications) indique précisément ce qui a été testé, et où.
+> **Préversion 0.3.0.** La section [État des vérifications](#état-des-vérifications) indique précisément ce qui a été testé, et où.
 
 ## Fonctionnalités
 
@@ -27,6 +27,7 @@ NOYA SSH Manager est écrit en Swift et SwiftUI, sans aucune dépendance externe
 - **Environnements** clairement identifiés : Production, Test, Ancien serveur.
 - **Import depuis `~/.ssh/config`** : les sections `Host` (et les fichiers `Include`) sont lues pour proposer vos alias existants.
 - **Connexion en un clic** (⌘↩) dans une nouvelle fenêtre Terminal, avec `/usr/bin/ssh -- alias`.
+- **Fond de fenêtre selon l'environnement** : rouge très sombre en production, bleu nuit en test, gris pour les anciens serveurs ; votre profil Terminal est conservé. Voir [Couleur de fond](#couleur-de-fond-selon-lenvironnement).
 - **Paramètres effectifs** de chaque alias (hôte, utilisateur, port, clé, rebond) calculés par OpenSSH lui-même avec `ssh -G`.
 - **Surveillance de disponibilité** : test TCP du port SSH, en parallèle, avec latence, délai d'expiration de 3 s et actualisation toutes les 30 s **uniquement quand la fenêtre est au premier plan**.
 - **Import / export JSON** de la liste (sans aucun secret).
@@ -43,6 +44,7 @@ NOYA SSH Manager est écrit en Swift et SwiftUI, sans aucune dépendance externe
 | Pas d'injection de commande | Alias validés par liste blanche (`A-Z a-z 0-9 . _ -`, pas de `-` initial), séparés par `--`, cités pour le shell. |
 | Aucune commande distante | Seule action réseau automatique : ouvrir puis fermer une connexion TCP vers le port SSH. |
 | Aucune télémétrie, aucun compte | Aucune donnée n'est envoyée à un service tiers. |
+| Réglages de Terminal intacts | La couleur de fond est appliquée à la seule fenêtre ouverte (séquence OSC 11) ; aucun profil Terminal n'est créé ni modifié. |
 | Aucun processus en arrière-plan | L'application se ferme avec sa dernière fenêtre ; la surveillance s'arrête avec elle. |
 | Assistant IA sans envoi de données | `fm chat` est ouvert avec le modèle d'Apple exécuté sur le Mac, jamais Private Cloud Compute ; l'application ne lit pas les conversations. |
 
@@ -101,6 +103,20 @@ Seul `alias` est obligatoire. `environnement` accepte `production`, `test` ou `a
 - La **latence** affichée est le temps d'établissement de la connexion TCP.
 - Les alias qui passent par un **rebond** (`ProxyJump`, `ProxyCommand`) sont marqués « Non vérifiable » : un test direct ne serait pas représentatif.
 - Chaque vérification apparaît dans les journaux SSH du serveur. Un pare-feu strict (par exemple **fail2ban en mode agressif**) peut juger ces connexions suspectes : augmentez l'intervalle dans **Réglages › Surveillance** si nécessaire.
+
+## Couleur de fond selon l'environnement
+
+Pour reconnaître d'un coup d'œil une session sur un serveur sensible, chaque fenêtre Terminal ouverte par l'application prend un fond propre à l'environnement du serveur :
+
+| Environnement | Fond par défaut |
+|---|---|
+| Production | Rouge très sombre `#2A0B0F` |
+| Test | Bleu nuit `#0B1630` |
+| Ancien serveur | Gris anthracite `#26272B` |
+
+- Seul le **fond** change : la police, la couleur du texte et le curseur restent ceux de votre profil Terminal, et aucun réglage de Terminal n'est modifié. La couleur est envoyée à la fenêtre par la séquence d'échappement OSC 11, que Terminal.app accepte.
+- Les couleurs se règlent dans **Réglages › Terminal** (ou se désactivent). Elles sont validées au format `#RRGGBB` avant d'être écrites dans le script.
+- La fenêtre commence sur un écran propre : la ligne « …command ; exit; » tapée par Terminal est effacée.
 
 ## Assistant IA local (macOS 27)
 
@@ -184,7 +200,7 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/). La ver
 
 | Élément | Vérification | Résultat |
 |---|---|---|
-| Cœur `NoyaCore` (57 tests) | `swift test` sous Linux (Swift 6.4 en local, 6.2 en intégration continue) | Réussi |
+| Cœur `NoyaCore` (63 tests) | `swift test` sous Linux (Swift 6.4 en local, 6.2 en intégration continue) | Réussi |
 | Cœur `NoyaCore` (57 tests) | `swift test` sous macOS 26.7, Swift 6.3 (GitHub Actions) | Réussi |
 | Compilation de l'application | `xcodebuild` Release avec Xcode 26.6 (GitHub Actions) : binaire universel arm64 + x86_64, 4,6 Mo (version 0.2.0), Hardened Runtime, signature ad hoc | Réussi |
 | Lancement de l'application | Test manuel sur un MacBook Air Apple Silicon | Réussi |
@@ -192,6 +208,7 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/). La ver
 | Connexion dans Terminal | Test manuel sur un MacBook Air Apple Silicon | Réussi |
 | Surveillance TCP (disponibilité, latence) | Test manuel sur un Mac | **À confirmer** |
 | Assistant IA local (`fm`, macOS 27) | Tests automatisés du script et de l'analyse des sorties (faux `fm`) ; essai réel de la 0.2.0 sur un MacBook Air Apple Silicon sous macOS 27 | Réussi |
+| Fond selon l'environnement (OSC 11) | Séquence acceptée par Terminal.app, essai manuel sous macOS 27 ; octets envoyés vérifiés par test automatisé ; essai de la 0.3.0 sur un Mac | **À confirmer avec la 0.3.0** |
 | Compilation avec Xcode 16 | — | Non testée |
 | Consommation mémoire et processeur | Mesure avec les outils macOS | **À réaliser** |
 

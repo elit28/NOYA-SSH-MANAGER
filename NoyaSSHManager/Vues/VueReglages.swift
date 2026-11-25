@@ -7,6 +7,8 @@ struct VueReglages: View {
         TabView {
             ReglagesGeneraux()
                 .tabItem { Label("Général", systemImage: "gearshape") }
+            ReglagesTerminal()
+                .tabItem { Label("Terminal", systemImage: "terminal") }
             ReglagesSurveillance()
                 .tabItem { Label("Surveillance", systemImage: "waveform.path.ecg") }
             ReglagesConfidentialite()
@@ -98,6 +100,57 @@ struct ReglagesGeneraux: View {
         guard let chemin = store.stockage?.url.path else { return "Indisponible" }
         let maison = FileManager.default.homeDirectoryForCurrentUser.path
         return chemin.hasPrefix(maison) ? "~" + String(chemin.dropFirst(maison.count)) : chemin
+    }
+}
+
+/// Couleur de fond des fenêtres Terminal selon l'environnement du serveur.
+struct ReglagesTerminal: View {
+    @AppStorage(CleReglage.fondSelonEnvironnement) private var actif = true
+    @AppStorage(CleReglage.fond(.production)) private var fondProduction = CouleurFond.parDefaut(pour: .production).hex
+    @AppStorage(CleReglage.fond(.test)) private var fondTest = CouleurFond.parDefaut(pour: .test).hex
+    @AppStorage(CleReglage.fond(.ancien)) private var fondAncien = CouleurFond.parDefaut(pour: .ancien).hex
+
+    var body: some View {
+        Form {
+            Section {
+                Toggle("Couleur de fond selon l’environnement", isOn: $actif)
+                LigneInfo(
+                    icone: "info.circle",
+                    texte: "Seul le fond de la fenêtre ouverte par NOYA SSH Manager change : votre profil Terminal (police, couleur du texte, curseur) et vos réglages ne sont jamais modifiés."
+                )
+            }
+
+            Section("Couleurs") {
+                ColorPicker("Production", selection: liaison($fondProduction, .production), supportsOpacity: false)
+                ColorPicker("Test", selection: liaison($fondTest, .test), supportsOpacity: false)
+                ColorPicker("Ancien serveur", selection: liaison($fondAncien, .ancien), supportsOpacity: false)
+                Button("Rétablir les couleurs par défaut") {
+                    fondProduction = CouleurFond.parDefaut(pour: .production).hex
+                    fondTest = CouleurFond.parDefaut(pour: .test).hex
+                    fondAncien = CouleurFond.parDefaut(pour: .ancien).hex
+                }
+            }
+            .disabled(!actif)
+
+            Section {
+                LigneInfo(
+                    icone: "eye",
+                    texte: "Choisissez des fonds sombres si votre texte est clair. Le fond s’applique dès l’ouverture de la fenêtre, avant la connexion ; l’assistant IA garde le fond de votre profil."
+                )
+            }
+        }
+        .formStyle(.grouped)
+    }
+
+    private func liaison(_ texte: Binding<String>, _ environnement: Environnement) -> Binding<Color> {
+        Binding(
+            get: { Color(couleur: CouleurFond(hex: texte.wrappedValue) ?? CouleurFond.parDefaut(pour: environnement)) },
+            set: { nouvelle in
+                if let couleur = CouleurFond(couleur: nouvelle) {
+                    texte.wrappedValue = couleur.hex
+                }
+            }
+        )
     }
 }
 

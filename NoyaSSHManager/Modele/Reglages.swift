@@ -1,4 +1,5 @@
 import Foundation
+import NoyaCore
 
 /// Clés des préférences (UserDefaults / @AppStorage).
 enum CleReglage {
@@ -6,6 +7,12 @@ enum CleReglage {
     static let intervalle = "intervalleSecondes"
     static let delai = "delaiSecondes"
     static let animations = "animations"
+    static let fondSelonEnvironnement = "fondTerminalSelonEnvironnement"
+
+    /// Clé de la couleur de fond Terminal d'un environnement.
+    static func fond(_ environnement: Environnement) -> String {
+        "fondTerminal.\(environnement.rawValue)"
+    }
 }
 
 /// Accès aux préférences en dehors des vues.
@@ -17,12 +24,25 @@ enum Reglages {
     static let delaiParDefaut = 3
 
     static func enregistrerValeursParDefaut() {
-        UserDefaults.standard.register(defaults: [
+        var valeurs: [String: Any] = [
             CleReglage.actualisationAuto: true,
             CleReglage.intervalle: intervalleParDefaut,
             CleReglage.delai: delaiParDefaut,
             CleReglage.animations: true,
-        ])
+            CleReglage.fondSelonEnvironnement: true,
+        ]
+        for environnement in Environnement.allCases {
+            valeurs[CleReglage.fond(environnement)] = CouleurFond.parDefaut(pour: environnement).hex
+        }
+        UserDefaults.standard.register(defaults: valeurs)
+    }
+
+    /// Couleur de fond de la fenêtre Terminal pour un environnement, ou nil si l'option est désactivée.
+    /// Une valeur enregistrée invalide est remplacée par la couleur par défaut.
+    static func fondTerminal(pour environnement: Environnement) -> CouleurFond? {
+        guard UserDefaults.standard.bool(forKey: CleReglage.fondSelonEnvironnement) else { return nil }
+        let enregistree = UserDefaults.standard.string(forKey: CleReglage.fond(environnement)) ?? ""
+        return CouleurFond(hex: enregistree) ?? CouleurFond.parDefaut(pour: environnement)
     }
 
     static var actualisationAuto: Bool {

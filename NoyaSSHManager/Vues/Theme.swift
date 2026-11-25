@@ -1,3 +1,4 @@
+import AppKit
 import NoyaCore
 import SwiftUI
 
@@ -39,6 +40,22 @@ extension Color {
             blue: Double(hex & 0xFF) / 255,
             opacity: opacite
         )
+    }
+}
+
+extension Color {
+    /// Couleur SwiftUI correspondant à une couleur de fond Terminal.
+    init(couleur: CouleurFond) {
+        let c = couleur.composantes
+        self.init(.sRGB, red: c.rouge, green: c.vert, blue: c.bleu)
+    }
+}
+
+extension CouleurFond {
+    /// Couleur de fond Terminal à partir d'une couleur SwiftUI (espace sRGB).
+    init?(couleur: Color) {
+        guard let ns = NSColor(couleur).usingColorSpace(.sRGB) else { return nil }
+        self.init(rouge: Double(ns.redComponent), vert: Double(ns.greenComponent), bleu: Double(ns.blueComponent))
     }
 }
 

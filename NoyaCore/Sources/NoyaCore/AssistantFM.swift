@@ -66,6 +66,7 @@ public enum AssistantFM {
         #!/bin/sh
         # Fichier temporaire créé par NOYA SSH Manager. Il se supprime lui-même.
         rm -f -- "$0"
+        \(SequencesTerminal.effacer)
         printf '\\033]0;%s\\007' \(Shell.citer("Assistant IA local"))
         exec \(arguments.joined(separator: " "))
 

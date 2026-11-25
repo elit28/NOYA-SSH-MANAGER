@@ -26,19 +26,23 @@ public struct CommandeSSH: Sendable, Equatable {
 
     /// Contenu du script temporaire ouvert par Terminal.app.
     ///
-    /// Le script se supprime dès son lancement, définit le titre de la
-    /// fenêtre puis remplace son processus par `ssh` (`exec`).
-    public func scriptTerminal() -> String {
-        let aliasCite = Shell.citer(alias)
-        let titreCite = Shell.citer("SSH — \(alias)")
-        return """
-        #!/bin/sh
-        # Fichier temporaire créé par NOYA SSH Manager. Il se supprime lui-même.
-        rm -f -- "$0"
-        printf '\\033]0;%s\\007' \(titreCite)
-        exec \(Shell.citer(Self.executable)) -- \(aliasCite)
-
-        """
+    /// Le script se supprime dès son lancement, colore le fond de sa fenêtre
+    /// (si une couleur est donnée), efface la ligne « …command ; exit; » tapée
+    /// par Terminal, définit le titre de la fenêtre puis remplace son processus
+    /// par `ssh` (`exec`).
+    public func scriptTerminal(fond: CouleurFond? = nil) -> String {
+        var lignes = [
+            "#!/bin/sh",
+            "# Fichier temporaire créé par NOYA SSH Manager. Il se supprime lui-même.",
+            #"rm -f -- "$0""#,
+        ]
+        if let fond {
+            lignes.append(SequencesTerminal.fond(fond))
+        }
+        lignes.append(SequencesTerminal.effacer)
+        lignes.append(#"printf '\033]0;%s\007' "# + Shell.citer("SSH — \(alias)"))
+        lignes.append("exec \(Shell.citer(Self.executable)) -- \(Shell.citer(alias))")
+        return lignes.joined(separator: "\n") + "\n"
     }
 }
 
