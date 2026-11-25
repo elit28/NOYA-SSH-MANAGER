@@ -208,7 +208,7 @@ Le projet suit le [versionnage sémantique](https://semver.org/lang/fr/). La ver
 | Connexion dans Terminal | Test manuel sur un MacBook Air Apple Silicon | Réussi |
 | Surveillance TCP (disponibilité, latence) | Test manuel sur un Mac | **À confirmer** |
 | Assistant IA local (`fm`, macOS 27) | Tests automatisés du script et de l'analyse des sorties (faux `fm`) ; essai réel de la 0.2.0 sur un MacBook Air Apple Silicon sous macOS 27 | Réussi |
-| Fond selon l'environnement (OSC 11) | Séquence acceptée par Terminal.app, essai manuel sous macOS 27 ; octets envoyés vérifiés par test automatisé ; essai de la 0.3.0 sur un Mac | **À confirmer avec la 0.3.0** |
+| Fond selon l'environnement (OSC 11) | Octets envoyés vérifiés par test automatisé ; essai réel de la 0.3.0 sur un MacBook Air Apple Silicon sous macOS 27 | Réussi |
 | Compilation avec Xcode 16 | — | Non testée |
 | Consommation mémoire et processeur | Mesure avec les outils macOS | **À réaliser** |
 
